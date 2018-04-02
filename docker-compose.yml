@@ -1,0 +1,8 @@
+version: "2"
+
+services:
+  ss-server:
+    build:
+      context: ./ss-server
+    ports:
+      - ${SS_PORT}:6500    
