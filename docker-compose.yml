@@ -4,7 +4,8 @@ services:
   ss-server:
     build:
       context: ./ss-server
-      args:
-        - PASSWORD=${SS_PASSWORD}
     ports:
-      - ${SS_PORT}:8388    
+      - "${SS_PORT}:8388"
+    environment:
+      - PASSWORD=${SS_PASSWORD}
+    restart: always  
