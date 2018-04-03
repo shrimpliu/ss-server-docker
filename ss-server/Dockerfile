@@ -1,4 +1,4 @@
-FROM alpine
+FROM node:8-alpine
 
 ENV SERVER_ADDR 0.0.0.0
 ENV PASSWORD=
@@ -13,6 +13,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/' /etc/apk/repositories
 RUN set -ex \
  # Build environment setup
  && apk add --no-cache --virtual .build-deps \
+      yarn \
       autoconf \
       automake \
       build-base \
@@ -24,8 +25,8 @@ RUN set -ex \
       mbedtls-dev \
       pcre-dev
  # Build & install
- COPY shadowsocks-libev-3.1.3.tar.gz shadowsocks-libev-3.1.3.tar.gz
- RUN tar -zxf shadowsocks-libev-3.1.3.tar.gz \
+COPY shadowsocks-libev-3.1.3.tar.gz shadowsocks-libev-3.1.3.tar.gz
+RUN tar -zxf shadowsocks-libev-3.1.3.tar.gz \
     && cd shadowsocks-libev-3.1.3 \
     && ./configure --prefix=/usr --disable-documentation \
     && make install \
@@ -38,14 +39,15 @@ RUN set -ex \
         | sort -u) \
     && rm -rf shadowsocks-libev-3.1.3
 
-EXPOSE 65000
+RUN yarn config set registry https://registry.npm.taobao.org \
+    && yarn global add shadowsocks-manager \
+    && echo $TZ > /etc/timezone \
+    && rm /etc/localtime
 
- CMD exec ss-manager \
-    -m $METHOD \
-    -t $TIMEOUT \
-    --fast-open \
-    -d $DNS_ADDR \
-    -d $DNS_ADDR_2 \
-    -u \
-    --manager-address 0.0.0.0:65000 \
-    $ARGS
+COPY webgui.yml webgui.yml
+
+COPY ss.yml ss.yml
+
+COPY exec.sh exec.sh
+
+CMD [ "sh", "exec.sh" ]

@@ -1,7 +1,7 @@
 type: m
 
 manager:
-  address: ss-mgr:6002
+  address: 127.0.0.1:6002
   password: '45CjP6gxQmNbaNiA'
 
 plugins:
