@@ -10,6 +10,6 @@ ss-manager \
     --manager-address 0.0.0.0:65000 \
     $ARGS &
 
-ssmgr -c /webgui.yml &    
+ssmgr -c /config/webgui.yml &    
 
-ssmgr -c /ss.yml
+ssmgr -c /config/ss.yml

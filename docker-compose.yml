@@ -8,4 +8,6 @@ services:
       - "65000-65200:65000-65200"
       - "${SSMGR_PORT}:6002"
       - "${SSGUI_PORT}:80"
+    volumes:
+      - ./config:/config
     restart: always

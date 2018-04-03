@@ -44,9 +44,7 @@ RUN yarn config set registry https://registry.npm.taobao.org \
     && echo $TZ > /etc/timezone \
     && rm /etc/localtime
 
-COPY webgui.yml webgui.yml
-
-COPY ss.yml ss.yml
+VOLUME /config
 
 COPY exec.sh exec.sh
 
