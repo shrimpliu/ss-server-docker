@@ -13,7 +13,7 @@ RUN yarn global add shadowsocks-manager \
     && echo $TZ > /etc/timezone \
     && rm /etc/localtime
 
-EXPOSE 6002
+EXPOSE 80    
 
 COPY ss.yml ss.yml
 

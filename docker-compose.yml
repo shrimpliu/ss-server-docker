@@ -14,4 +14,11 @@ services:
     ports:
       - "${SSMGR_PORT}:6002"
     depends_on:
-      - ss-server    
+      - ss-server
+  ss-gui:
+    build:
+      context: ./ss-gui
+    ports:
+      - "${SSGUI_PORT}:80"
+    depends_on:
+      - ss-mgr      
