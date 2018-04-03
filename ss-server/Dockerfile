@@ -1,65 +1,57 @@
-FROM alpine:3.7
+FROM alpine
 
-ARG TZ='Asia/Shanghai'
+ARG PASSWORD=secret
 
-ENV TZ $TZ
-ENV SS_LIBEV_VERSION 3.1.3
-ENV KCP_VERSION 20180316
+ENV SERVER_ADDR 0.0.0.0
+ENV PASSWORD    ${PASSWORD}}
+ENV METHOD      aes-256-cfb
+ENV TIMEOUT     300
+ENV DNS_ADDR    8.8.8.8
+ENV DNS_ADDR_2  8.8.4.4
+ENV ARGS=
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/' /etc/apk/repositories
 
-RUN apk upgrade --update \
-    && apk add bash tzdata libsodium \
-    && apk add --virtual .build-deps \
-        autoconf \
-        automake \
-        xmlto \
-        build-base \
-        curl \
-        c-ares-dev \
-        libev-dev \
-        libtool \
-        linux-headers \
-        udns-dev \
-        libsodium-dev \
-        mbedtls-dev \
-        pcre-dev \
-        udns-dev \
-        tar \
-        git
-
-COPY ./packages ./       
-
-RUN tar -zxf shadowsocks-libev-${SS_LIBEV_VERSION}.tar.gz \
-    && (cd shadowsocks-libev-${SS_LIBEV_VERSION} \
+RUN set -ex \
+ # Build environment setup
+ && apk add --no-cache --virtual .build-deps \
+      autoconf \
+      automake \
+      build-base \
+      c-ares-dev \
+      libev-dev \
+      libtool \
+      libsodium-dev \
+      linux-headers \
+      mbedtls-dev \
+      pcre-dev
+ # Build & install
+ COPY ./packages ./
+ RUN tar -zxf shadowsocks-libev-3.1.3.tar.gz \
+    && cd shadowsocks-libev-3.1.3 \
     && ./configure --prefix=/usr --disable-documentation \
-    && make install)
-
-RUN git clone https://github.com/shadowsocks/simple-obfs.git \
-    && (cd simple-obfs \
-    && git submodule update --init --recursive \
-    && ./autogen.sh && ./configure --disable-documentation\
-    && make && make install)
-
-RUN tar -zxf kcptun-linux-amd64-${KCP_VERSION}.tar.gz \
-    && mv server_linux_amd64 /usr/bin/kcpserver \
-    && mv client_linux_amd64 /usr/bin/kcpclient \
-    && ln -sf /usr/share/zoneinfo/$TZ /etc/localtime \
-    && echo $TZ > /etc/timezone \
-    && runDeps="$( \
-        scanelf --needed --nobanner /usr/bin/ss-* /usr/local/bin/obfs-* \
-            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-            | xargs -r apk info --installed \
-            | sort -u \
-        )" \
-    && apk add --virtual .run-deps $runDeps \
+    && make install \
     && apk del .build-deps \
-    && rm -rf kcptun-linux-amd64-${KCP_VERSION}.tar.gz \
-        shadowsocks-libev-${SS_LIBEV_VERSION}.tar.gz \
-        shadowsocks-libev-${SS_LIBEV_VERSION} \
-        simple-obfs \
-        /var/cache/apk/*
+    # Runtime dependencies setup
+    && apk add --no-cache \
+        rng-tools \
+        $(scanelf --needed --nobanner /usr/bin/ss-* \
+        | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+        | sort -u) \
+    && rm -rf shadowsocks-libev-3.1.3
 
-EXPOSE 6500
+USER nobody
 
-CMD [ "sh", "-c", "ss-server -s 0.0.0.0 -p 26014 -m aes-256-cfb -k ${SS_PASSWORD} --fast-open && kcpserver -t 127.0.0.1:26014 -l :6500 -mode fast2" ]
+EXPOSE 8388/tcp 8388/udp
+
+CMD exec ss-server \
+      -s $SERVER_ADDR \
+      -p 8388 \
+      -k ${PASSWORD:-$(hostname)} \
+      -m $METHOD \
+      -t $TIMEOUT \
+      --fast-open \
+      -d $DNS_ADDR \
+      -d $DNS_ADDR_2 \
+      -u \
+      $ARGS
