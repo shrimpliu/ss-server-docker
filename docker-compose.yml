@@ -6,4 +6,12 @@ services:
       context: ./ss-server
     ports:
       - "${SSM_PORT}:6001"
+      - "65000-65200:65000-65200"
     restart: always
+  ss-mgr:
+    build:
+      context: ./ss-mgr
+    ports:
+      - "${SSMGR_PORT}:6002"
+    depends_on:
+      - ss-server    

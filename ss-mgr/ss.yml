@@ -1,0 +1,10 @@
+type: s
+
+shadowsocks:
+  address: ss-server:6001
+
+manager:
+  address: 0.0.0.0:6002
+  password: '45CjP6gxQmNbaNiA'
+
+db: 'ss.sqlite'
