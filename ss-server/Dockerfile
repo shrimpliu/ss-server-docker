@@ -38,7 +38,7 @@ RUN set -ex \
         | sort -u) \
     && rm -rf shadowsocks-libev-3.1.3
 
-EXPOSE 6001
+EXPOSE 65000
 
  CMD exec ss-manager \
     -m $METHOD \
@@ -47,5 +47,5 @@ EXPOSE 6001
     -d $DNS_ADDR \
     -d $DNS_ADDR_2 \
     -u \
-    --manager-address 0.0.0.0:6001 \
+    --manager-address 0.0.0.0:65000 \
     $ARGS

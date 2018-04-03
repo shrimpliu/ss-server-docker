@@ -1,7 +1,7 @@
 type: s
 
 shadowsocks:
-  address: ss-server:6001
+  address: ss-server:65000
 
 manager:
   address: 0.0.0.0:6002
