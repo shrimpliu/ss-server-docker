@@ -8,4 +8,4 @@ services:
       - "${SS_PORT}:8388"
     environment:
       - PASSWORD=${SS_PASSWORD}
-    restart: always  
+    restart: always

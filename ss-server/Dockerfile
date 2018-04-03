@@ -24,7 +24,7 @@ RUN set -ex \
       mbedtls-dev \
       pcre-dev
  # Build & install
- COPY ./packages ./
+ COPY shadowsocks-libev-3.1.3.tar.gz shadowsocks-libev-3.1.3.tar.gz
  RUN tar -zxf shadowsocks-libev-3.1.3.tar.gz \
     && cd shadowsocks-libev-3.1.3 \
     && ./configure --prefix=/usr --disable-documentation \
