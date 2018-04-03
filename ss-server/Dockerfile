@@ -38,18 +38,14 @@ RUN set -ex \
         | sort -u) \
     && rm -rf shadowsocks-libev-3.1.3
 
-USER nobody
+EXPOSE 6001
 
-EXPOSE 8388/tcp 8388/udp
-
-CMD exec ss-server \
-      -s $SERVER_ADDR \
-      -p 8388 \
-      -k ${PASSWORD:-$(hostname)} \
-      -m $METHOD \
-      -t $TIMEOUT \
-      --fast-open \
-      -d $DNS_ADDR \
-      -d $DNS_ADDR_2 \
-      -u \
-      $ARGS
+ CMD exec ss-manager \
+    -m $METHOD \
+    -t $TIMEOUT \
+    --fast-open \
+    -d $DNS_ADDR \
+    -d $DNS_ADDR_2 \
+    -u \
+    --manager-address 0.0.0.0:6001 \
+    $ARGS

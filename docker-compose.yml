@@ -5,7 +5,5 @@ services:
     build:
       context: ./ss-server
     ports:
-      - "${SS_PORT}:8388"
-    environment:
-      - PASSWORD=${SS_PASSWORD}
+      - "${SSM_PORT}:6001"
     restart: always
