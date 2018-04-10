@@ -44,7 +44,9 @@ RUN yarn config set registry https://registry.npm.taobao.org \
     && echo $TZ > /etc/timezone \
     && rm /etc/localtime
 
-VOLUME /config
+RUN mkdir /root/.ssmgr 
+
+VOLUME /root/.ssmgr
 
 COPY exec.sh exec.sh
 

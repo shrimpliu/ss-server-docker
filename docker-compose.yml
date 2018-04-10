@@ -9,5 +9,5 @@ services:
       - "${SSMGR_PORT}:6002"
       - "${SSGUI_PORT}:80"
     volumes:
-      - ./config:/config
+      - ./config:/root/.ssmgr
     restart: always
