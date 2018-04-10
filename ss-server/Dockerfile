@@ -39,8 +39,7 @@ RUN tar -zxf shadowsocks-libev-3.1.3.tar.gz \
         | sort -u) \
     && rm -rf shadowsocks-libev-3.1.3
 
-RUN yarn config set registry https://registry.npm.taobao.org \
-    && yarn global add shadowsocks-manager \
+RUN yarn global add shadowsocks-manager \
     && echo $TZ > /etc/timezone \
     && rm /etc/localtime
 
